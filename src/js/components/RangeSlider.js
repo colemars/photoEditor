@@ -4,10 +4,9 @@ import '../../css/RangeSlider.css';
 import { connect } from "react-redux";
 import { updateZoomValue } from "../actions/index";
 
-
 const dimensions = {
     thumbHeight: 30,
-    sliderHeight: 300
+    sliderHeight: window.innerHeight - window.innerHeight / 3
 }
 
 let styles = {
@@ -58,59 +57,72 @@ class RangeSlider extends React.Component {
             barPct: 0,
             textContent: "0%",
             lastValue: 0,
-            currentValue: 0
         }
 
+        this.myRef = React.createRef();
         this.lastValue = null;
         this.currentValue = null;
 
         this.handleSlide = this.handleSlide.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+
+        
     }
 
-    updateSlider(element) {
-        if (element) {
-            this.setState({lastValue: this.props.currentZoomValue});
-            this.props.updateZoomValue(Number(element.value));
-            this.setState({currentValue: Number(element.value)});
-            this.setState({textContent : this.props.currentZoomValue + '%'})
+    updateSlider(){
+        this.currentValue = this.props.currentZoomValue;
 
-            if (this.state.lastValue === this.props.currentZoomValue) {
-                return; // No value change, no need to update then
-            }
-            
-            let barPct = this.props.currentZoomValue * ((dimensions.sliderHeight - dimensions.thumbHeight ) / dimensions.sliderHeight);
-            
-            this.setState({rangeSliderHeight: 'calc(' + barPct + '% + ' + dimensions.thumbHeight  / 2 + 'px)'});
-            styles.bar = {...styles.bar, height: this.state.rangeSliderHeight};
-            styles.thumb = {...styles.thumb, bottom: barPct + '%'};
-
-            this.forceUpdate();
+        
+        
+        if (this.currentValue > 100){
+            this.currentValue = 100
         }
+        if (this.currentValue < 0){
+            this.currentValue = 0
+        }
+        this.textContent = this.currentValue + '%';   
+        let barPct = this.currentValue * ((dimensions.sliderHeight - dimensions.thumbHeight ) / dimensions.sliderHeight);
+        let rangeSliderHeight = 'calc(' + barPct + '% + ' + dimensions.thumbHeight  / 2 + 'px)'
+        styles.bar = {...styles.bar, height: rangeSliderHeight};
+        styles.thumb = {...styles.thumb, bottom: barPct + '%'}; 
     }
 
-    handleSlide(event){
-        this.updateSlider(event.target);
-        this.props.handleSlide(this.props.currentZoomValue-this.state.lastValue);   
+    handleSlide(){   
+        let zoomVal = Number(this.myRef.current.value)
+        this.props.updateZoomValue(zoomVal);
+        this.props.handleSlide(zoomVal+10);
+    }
+
+    handleMouseUp(){   
+       this.forceUpdate();
+    }
+
+    componentWillUpdate(){        
+        this.updateSlider()
     }
 
     componentDidUpdate(){
+        this.updateSlider()
+    }
+
+    componentWillMount(){
+        this.textContent = '0%';
+        this.updateSlider();
     }
 
     componentDidMount() {
-        var input = [].slice.call(document.querySelectorAll('.range-slider input'))[0];
-        input.setAttribute('value', '0');
-        this.updateSlider(input);
         // Cross-browser support where value changes instantly as you drag the handle, therefore two event types.
-        input.addEventListener('input', this.handleSlide, false);
-        input.addEventListener('change', this.handleSlide, false);
+        this.myRef.current.addEventListener('input', this.handleSlide, false);
+        this.myRef.current.addEventListener('change', this.handleSlide, false);
+        this.myRef.current.addEventListener('mouseup', this.handleMouseUp, false);
     }
 
     render() {
         return (
             <div className="range-slider" style={styles.rangeSlider}>
-                <input type="range" orient="vertical" min="0" max="100" />
+                <input type="range" orient="vertical" min="0" max="100" ref = {this.myRef}/>
                 <div className="range-slider__bar" style={styles.bar}></div>
-                <div className="range-slider__thumb" style={styles.thumb}>{this.state.textContent}</div>
+                <div className="range-slider__thumb" style={styles.thumb}>{this.textContent}</div>
             </div>
         );
     }
@@ -130,7 +142,8 @@ function mapDispatchToProps(dispatch) {
 
 RangeSlider.propTypes = {
     currentZoomValue: PropTypes.number.isRequired,
-    updateZoomValue: PropTypes.func.isRequired
+    updateZoomValue: PropTypes.func.isRequired,
+    zoomValue: PropTypes.number.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RangeSlider);

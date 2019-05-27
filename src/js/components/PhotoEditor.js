@@ -11,9 +11,10 @@ export default class PhotoEditor {
         this.dragged = null
         this.dragStart = null
         this.canvas = null
-        this.that = null
         this.mouseOnCanvas = false
         this.zoomValue = zoomValue
+        this.scale = 0
+        this.handleZoom = null
 
         this.handleResize = this.handleResize.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
@@ -33,37 +34,67 @@ export default class PhotoEditor {
         this.ctx.fillStyle = "rgba(0,0,0,.2)";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.restore();
-        this.ctx.drawImage(this.gkhead, this.canvas.width / 2 - this.gkhead.width / 2,
-            this.canvas.height / 2 - this.gkhead.height / 2);
+        this.ctx.drawImage(this.gkhead, 0,0, this.canvas.width, this.canvas.height);
     }
     getImageType(imageBase64) {
         let startIndex = imageBase64.indexOf(":") + 1;
         let endIndex = imageBase64.indexOf(";base64");
         return imageBase64.substring(startIndex, endIndex);
     }
+    slideZoom(clicks) {
+
+        console.log(clicks);
+        
+        let factor = Math.abs(clicks/10);
+
+        if (factor < 1 ) factor = 1;
+
+        console.log(factor);
+        
+
+        let pt = this.mouseOnCanvas ? this.ctx.transformedPoint(this.lastX, this.lastY) : this.ctx.transformedPoint(this.defaultX, this.defaultY)
+
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        this.ctx.translate(pt.x, pt.y);
+
+        this.ctx.scale(factor, factor);
+
+        this.ctx.translate(-pt.x, -pt.y);
+        this.redraw();
+    }
     zoom(clicks) {
-        console.log(this.zoomValue);
         let pt = this.mouseOnCanvas ? this.ctx.transformedPoint(this.lastX, this.lastY) : this.ctx.transformedPoint(this.defaultX, this.defaultY)
         this.ctx.translate(pt.x, pt.y);
         let factor = Math.pow(this.scaleFactor, clicks);
-        let scale = this.ctx.getTransform().a;
-        let scaleLowerLimit = 1,
-            scaleUpperLimit = 5,
-            decision = true
+        let scale = this.ctx.getTransform().a;        
+        let scaleLowerLimit = .85,
+        scaleUpperLimit = 6,
+        decision = true
         if (factor < 1) {
+            if(factor < 0.9){
+                factor = 0.9
+            }
             //zoom out
             if (scale < scaleLowerLimit) {
                 decision = false
             }
         } else if (factor > 1) {
+            if(factor > 1.1){
+                factor = 1.1
+            }
             //zoom in
             if (scale > scaleUpperLimit) {
                 decision = false
             }
         } else decision = false;
+
         if (decision === true) {
             this.ctx.scale(factor, factor);
-        }
+        } 
+
+        if (this.mouseOnCanvas) this.handleZoom((scale*factor)-1); 
+
         this.ctx.translate(-pt.x, -pt.y);
         this.redraw();
     }
@@ -110,6 +141,9 @@ export default class PhotoEditor {
     }
     handleMouseEnter(event){
         this.mouseOnCanvas = true;
+    }
+    updateZoomValue(val){
+        this.zoomValue = val;
     }
     trackTransforms(ctx) {
         const svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
@@ -171,7 +205,8 @@ export default class PhotoEditor {
             return pt.matrixTransform(xform.inverse());
         }
     }
-    init() {
+    init(handleZoom) {
+        console.log((this.zoomValue/25)+1)
         this.canvas = document.getElementById("canvas");
         this.canvas.width = window.innerWidth-window.innerWidth / 3;
         this.canvas.height = window.innerHeight - window.innerHeight / 6;
@@ -181,10 +216,12 @@ export default class PhotoEditor {
         this.defaultY = this.canvas.height / 2;
         this.ctx = this.canvas.getContext("2d");
         this.trackTransforms(this.ctx);
-        this.gkhead.src = 'http://phrogz.net/tmp/gkhead.jpg';
+        this.gkhead.src = 'https://i.imgur.com/kVaJ5zF.jpg';
         this.ctx.fillStyle = "rgba(41,41,41,.5)";
+        this.handleZoom = handleZoom;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.redraw();
+        this.ctx.getTransform().a += (this.zoomValue/25);
         window.addEventListener('resize', this.handleResize, false);
 
         this.canvas.addEventListener('mouseenter', this.handleMouseEnter, false);
