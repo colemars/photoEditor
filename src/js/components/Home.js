@@ -25,6 +25,7 @@ class Home extends React.Component {
         this.photoEditor = new PhotoEditor(this.props.currentZoomValue);
 
         this.handleSlide = this.handleSlide.bind(this);
+        this.handleImageLoad = this.handleImageLoad.bind(this);
         this.handleZoom = this.handleZoom.bind(this);
     }
 
@@ -42,11 +43,17 @@ class Home extends React.Component {
         this.setState({zoomValue: scale*25})
     }
 
+    handleImageLoad(){
+        this.forceUpdate();
+    }
+
     componentDidMount() {
-        this.photoEditor.init(this.handleZoom);
+        this.photoEditor.init(this.handleZoom, this.handleImageLoad);
     }
 
     componentDidUpdate() {
+        console.log('update');
+        
         // console.log('update', this.props.pct);
         
         // this.photoEditor.zoom(this.props.pct / 10);

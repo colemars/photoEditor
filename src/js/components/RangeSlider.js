@@ -66,21 +66,18 @@ class RangeSlider extends React.Component {
         this.handleSlide = this.handleSlide.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
 
-        
     }
 
     updateSlider(){
         this.currentValue = this.props.currentZoomValue;
 
-        
-        
         if (this.currentValue > 100){
             this.currentValue = 100
         }
         if (this.currentValue < 0){
             this.currentValue = 0
         }
-        this.textContent = this.currentValue + '%';   
+        this.textContent = Math.round(this.currentValue) + '%';   
         let barPct = this.currentValue * ((dimensions.sliderHeight - dimensions.thumbHeight ) / dimensions.sliderHeight);
         let rangeSliderHeight = 'calc(' + barPct + '% + ' + dimensions.thumbHeight  / 2 + 'px)'
         styles.bar = {...styles.bar, height: rangeSliderHeight};

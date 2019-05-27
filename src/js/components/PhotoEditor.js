@@ -205,7 +205,7 @@ export default class PhotoEditor {
             return pt.matrixTransform(xform.inverse());
         }
     }
-    init(handleZoom) {
+    init(handleZoom, handleImageLoad) {
         console.log((this.zoomValue/25)+1)
         this.canvas = document.getElementById("canvas");
         this.canvas.width = window.innerWidth-window.innerWidth / 3;
@@ -219,11 +219,11 @@ export default class PhotoEditor {
         this.gkhead.src = 'https://i.imgur.com/kVaJ5zF.jpg';
         this.ctx.fillStyle = "rgba(41,41,41,.5)";
         this.handleZoom = handleZoom;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.redraw();
-        this.ctx.getTransform().a += (this.zoomValue/25);
+        this.handleImageLoad = handleImageLoad;
+        this.gkhead.onload = () => {
+            this.redraw();
+         }
         window.addEventListener('resize', this.handleResize, false);
-
         this.canvas.addEventListener('mouseenter', this.handleMouseEnter, false);
         this.canvas.addEventListener('mouseleave', this.handleMouseLeave, false);
         this.canvas.addEventListener('DOMMouseScroll', this.handleScroll, false);
@@ -231,5 +231,6 @@ export default class PhotoEditor {
         this.canvas.addEventListener('mousedown', this.handleMouseDown, false);
         this.canvas.addEventListener('mousemove', this.handleMouseMove, false);
         this.canvas.addEventListener('mouseup', this.handleMouseUp, false);
+        
     }
 }
