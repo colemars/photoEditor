@@ -1,0 +1,90 @@
+
+.range-slider:before {
+    position: absolute;
+    top: -2em;
+    left: .5em;
+    content: attr(data-slider-value) "%";
+    color: white;
+    font-size: 90%;
+}
+
+.range-slider input[type=range][orient=vertical] {
+    position: relative;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    position: relative;
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+}
+
+.range-slider input[type=range][orient=vertical]::-webkit-slider-runnable-track,
+.range-slider input[type=range][orient=vertical]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+.range-slider input[type=range][orient=vertical]::-webkit-slider-runnable-track {
+    border: none;
+    background: #343440;
+    width: 8px;
+    border-color: #343440;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #3D3D4A;
+}
+
+.range-slider input[type=range][orient=vertical]::-moz-range-track {
+    border: none;
+    background: #343440;
+    width: 8px;
+    border-color: #343440;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #3D3D4A;
+}
+
+.range-slider input[type=range][orient=vertical]::-ms-track {
+    border: none;
+    background: #343440;
+    width: 8px;
+    border-color: #343440;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #3D3D4A;
+    color: transparent;
+    height: 100%;
+}
+
+.range-slider input[type=range][orient=vertical]::-ms-fill-lower,
+.range-slider input[type=range][orient=vertical]::-ms-fill-upper,
+.range-slider input[type=range][orient=vertical]::-ms-tooltip {
+    display: none;
+}
+
+.range-slider input[type=range][orient=vertical]::-webkit-slider-thumb {
+    width: 30px;
+    height: 30px;
+    opacity: 0;
+}
+
+.range-slider input[type=range][orient=vertical]::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    opacity: 0;
+}
+
+.range-slider input[type=range][orient=vertical]::-ms-thumb {
+    width: 30px;
+    height: 30px;
+    opacity: 0;
+}
+
+.theme1 {
+    background: linear-gradient(pink, deeppink);
+}
+
+.theme2 {
+    background: linear-gradient(tomato, red);
+}
+
+.theme3 {
+    background: linear-gradient(yellow, orange);
+}
