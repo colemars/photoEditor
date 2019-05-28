@@ -55,13 +55,6 @@ class RangeSlider extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      rangeSliderHeight: "0px",
-      barPct: 0,
-      textContent: "0%",
-      lastValue: 0
-    };
-
     this.myRef = React.createRef();
     this.lastValue = null;
     this.currentValue = null;

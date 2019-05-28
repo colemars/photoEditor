@@ -20,6 +20,18 @@
       handleZoom: null
     },
     canvasObject = {
+      requestAnimationFrame: function() {
+        debugger;
+        console.log("request");
+        return (
+          window.requestAnimationFrame ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+          }
+        );
+      },
       redraw: function() {
         let p1 = $globals.ctx.transformedPoint(0, 0);
         let p2 = $globals.ctx.transformedPoint(canvas.width, canvas.height);
@@ -79,6 +91,7 @@
         if ($globals.mouseOnCanvas)
           rangeSliderObject.handleZoom(scale * factor - 1);
         $globals.ctx.translate(-pt.x, -pt.y);
+        canvasObject.requestAnimationFrame(canvasObject.zoom);
         canvasObject.redraw();
       },
       handleResize: function() {

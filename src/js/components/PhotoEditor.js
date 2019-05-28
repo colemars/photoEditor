@@ -23,6 +23,7 @@ export default class PhotoEditor {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.redraw = this.redraw.bind(this);
   }
   redraw() {
     let p1 = this.ctx.transformedPoint(0, 0);
@@ -212,7 +213,7 @@ export default class PhotoEditor {
     this.defaultY = this.canvas.height / 2;
     this.ctx = this.canvas.getContext("2d");
     this.trackTransforms(this.ctx);
-    this.gkhead.src = "https://i.imgur.com/kVaJ5zF.jpg";
+    this.gkhead.src = "https://wallpapercave.com/wp/dLZ5oMU.png";
     this.ctx.fillStyle = "rgba(41,41,41,.5)";
     this.handleZoom = handleZoom;
     this.handleImageLoad = handleImageLoad;

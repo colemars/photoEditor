@@ -1,12 +1,3 @@
-.range-slider:before {
-    position: absolute;
-    top: -2em;
-    left: .5em;
-    content: attr(data-slider-value) "%";
-    color: white;
-    font-size: 90%;
-}
-
 .range-slider input[type=range][orient=vertical] {
     position: relative;
     margin: 0;
