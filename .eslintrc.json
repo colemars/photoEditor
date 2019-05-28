@@ -6,7 +6,8 @@
     },
     "extends": [
       "eslint:recommended",
-      "plugin:react/recommended"
+      "plugin:react/recommended",
+      "plugin:prettier/recommended"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -17,15 +18,16 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "prettier"
     ],
     "rules": {
         "react/self-closing-comp": ["error", {
           "component": true,
           "html": true
         }],
+        "prettier/prettier": "error",
         "react/jsx-tag-spacing": [2, {"beforeSelfClosing": "always"}],
-        "react/jsx-equals-spacing": [2, "always"],
         "react/jsx-handler-names": 2,
         "react/require-render-return": 2,
         "react/no-unused-state": 2,
@@ -46,10 +48,6 @@
         "react/jsx-indent": [
             "error",
             2
-          ],
-        "indent": [
-            "error",
-            2
         ],
         "linebreak-style": [
             "error",
@@ -57,7 +55,7 @@
         ],
         "quotes": [
             "error",
-            "single"
+            "double"
         ],
         "semi": [
             "error",

@@ -1,95 +1,93 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import PhotoEditor from '../components/PhotoEditor';
-import RangeSlider from '../components/RangeSlider';
+import React from "react";
+import PropTypes from "prop-types";
+import PhotoEditor from "../components/PhotoEditor";
+import RangeSlider from "../components/RangeSlider";
 import { connect } from "react-redux";
 import { updatePct } from "../actions/index";
 import { updateZoomValue } from "../actions/index";
-import store from '../store';
 
 const styles = {
-    canvas: {
-        boxShadow: 'rgba(41,41,41,1) 1px 1px 10px',
-        marginTop: '5vh'
-    },
+  canvas: {
+    boxShadow: "rgba(41,41,41,1) 0px 0px 4px"
+  },
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "5vh"
+  }
 };
 
 class Home extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            zoomValue: 0
-        }
+    this.state = {
+      zoomValue: 0
+    };
 
-        this.photoEditor = new PhotoEditor(this.props.currentZoomValue);
+    this.photoEditor = new PhotoEditor(this.props.currentZoomValue);
+    this.handleSlide = this.handleSlide.bind(this);
+    this.handleImageLoad = this.handleImageLoad.bind(this);
+    this.handleZoom = this.handleZoom.bind(this);
+  }
 
-        this.handleSlide = this.handleSlide.bind(this);
-        this.handleImageLoad = this.handleImageLoad.bind(this);
-        this.handleZoom = this.handleZoom.bind(this);
-    }
+  handleSlide(val) {
+    this.props.updatePct(val);
+    this.zoomValue = val;
+    this.photoEditor.slideZoom(val);
+  }
 
-    handleSlide(val) {
-        this.props.updatePct(val);
-        this.zoomValue = val;
+  handleZoom(scale) {
+    this.props.updateZoomValue(scale * 25);
+    this.setState({ zoomValue: scale * 25 });
+  }
 
-        this.photoEditor.slideZoom(val);
+  handleImageLoad() {
+    this.forceUpdate();
+  }
 
-        // this.photoEditor.zoom(val);
-    }
+  componentDidMount() {
+    this.photoEditor.init(this.handleZoom, this.handleImageLoad);
+  }
 
-    handleZoom(scale){        
-        this.props.updateZoomValue(scale*25);
-        this.setState({zoomValue: scale*25})
-    }
-
-    handleImageLoad(){
-        this.forceUpdate();
-    }
-
-    componentDidMount() {
-        this.photoEditor.init(this.handleZoom, this.handleImageLoad);
-    }
-
-    componentDidUpdate() {
-        console.log('update');
-        
-        // console.log('update', this.props.pct);
-        
-        // this.photoEditor.zoom(this.props.pct / 10);
-    }
-
-    render() {
-        return (
-            <div>
-                <canvas id={'canvas'} style={styles.canvas}></canvas>
-                <RangeSlider handleSlide={this.handleSlide} zoomValue={this.state.zoomValue} />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="container" style={styles.container}>
+        <canvas id={"canvas"} style={styles.canvas} />
+        <RangeSlider
+          handleSlide={this.handleSlide}
+          zoomValue={this.state.zoomValue}
+        />
+      </div>
+    );
+  }
 }
 const mapStateToProps = state => {
-    return {
-        lastX: state.lastX,
-        lastY: state.lastY,
-        pct: state.pct,
-        currentZoomValue: state.currentZoomValue
-    };
+  return {
+    lastX: state.lastX,
+    lastY: state.lastY,
+    pct: state.pct,
+    currentZoomValue: state.currentZoomValue
+  };
 };
 
 function mapDispatchToProps(dispatch) {
-    return {
-        updatePct: pct => dispatch(updatePct(pct)),
-        updateZoomValue: val => dispatch(updateZoomValue(val))
-    };
+  return {
+    updatePct: pct => dispatch(updatePct(pct)),
+    updateZoomValue: val => dispatch(updateZoomValue(val))
+  };
 }
 
 Home.propTypes = {
-    lastX: PropTypes.number.isRequired,
-    lastY: PropTypes.number.isRequired,
-    pct: PropTypes.number.isRequired,
-    updatePct: PropTypes.func.isRequired,
-    currentZoomValue: PropTypes.number.isRequired,
+  lastX: PropTypes.number.isRequired,
+  lastY: PropTypes.number.isRequired,
+  pct: PropTypes.number.isRequired,
+  updatePct: PropTypes.func.isRequired,
+  currentZoomValue: PropTypes.number.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Home);
